@@ -52,8 +52,6 @@ The **Recipe Book App** is a simple yet powerful application built with **React 
 - Categorization and filtering of recipes.
 - Sharing recipes via social media.
 
-## 📄 License
-This project is licensed under the **MIT License**.
 
 ---
 Feel free to contribute and improve the app! Happy coding! 🚀
