@@ -26,8 +26,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
       onClick={() => navigate(`/recipe/${recipe.id}`)}
       sx={{
         cursor: "pointer",
-        width: 350,
-        
+        width: { lg: "48%", md: "48%", sm: "100%", xs: "100%" },
         bgcolor: "grey.900",
         color: "white",
       }}>
