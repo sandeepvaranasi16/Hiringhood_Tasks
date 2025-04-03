@@ -74,7 +74,7 @@ const AddEditRecipe: React.FC = () => {
               as={TextField}
               fullWidth
               name="title"
-              label="Title"
+              label="Title*"
               error={touched.title && Boolean(errors.title)}
               helperText={touched.title && errors.title}
             />
@@ -82,12 +82,12 @@ const AddEditRecipe: React.FC = () => {
               as={TextField}
               fullWidth
               name="image"
-              label="Image URL"
+              label="Image URL*"
               error={touched.image && Boolean(errors.image)}
               helperText={touched.image && errors.image}
             />
             <Typography variant="h6" mt={2}>
-              Ingredients:
+              Ingredients*(min 1):
             </Typography>
             <FieldArray
               name="ingredients"
@@ -126,7 +126,7 @@ const AddEditRecipe: React.FC = () => {
               as={TextField}
               fullWidth
               name="instructions"
-              label="Instructions"
+              label="Instructions*"
               multiline
               rows={4}
               error={touched.instructions && Boolean(errors.instructions)}
