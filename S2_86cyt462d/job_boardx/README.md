@@ -95,7 +95,7 @@ server/
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/jobboardx.git
+git clone https://github.com/sandeepvaranasi16/jobboardx.git
 cd jobboardx
 ```
 
