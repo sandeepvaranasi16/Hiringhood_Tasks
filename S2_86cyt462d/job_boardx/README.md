@@ -4,12 +4,6 @@ JobBoardX is a role-based, full-stack web application that simulates a real-worl
 
 ---
 
-## 🌐 Live Demo
-
-> [Coming Soon – You can deploy via Vercel (frontend) + Render (backend)]
-
----
-
 ## 🚀 Features
 
 ### 👨‍💻 Job Seeker
