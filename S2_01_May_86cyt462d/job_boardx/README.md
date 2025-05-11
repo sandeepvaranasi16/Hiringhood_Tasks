@@ -44,7 +44,7 @@ JobBoardX is a role-based, full-stack web application that simulates a real-worl
 - TypeScript
 - React Router v6
 - MUI + styled-components
-- Formik + Yup
+- React-hook-form + Yup validation
 - Axios
 - Toastify
 
