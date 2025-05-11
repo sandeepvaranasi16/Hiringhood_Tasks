@@ -5,10 +5,11 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 import { useState } from "react";
 
 const LoginSchema = Yup.object().shape({
@@ -16,10 +17,35 @@ const LoginSchema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
+type LoginFormData = Yup.InferType<typeof LoginSchema>;
+
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: yupResolver(LoginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      setError("");
+      const user = await login(data);
+      if (user) {
+        navigate("/");
+      } else {
+        setError("Invalid user role");
+      }
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError(err.response?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <Box maxWidth={400} mx="auto" mt={6}>
@@ -33,73 +59,42 @@ const Login = () => {
         </Typography>
       )}
 
-      <Formik
-        initialValues={{
-          email: "",
-          password: "",
-        }}
-        validationSchema={LoginSchema}
-        onSubmit={async (values, { setSubmitting }) => {
-          try {
-            setError("");
-            const user = await login(values);
+      <TextField
+        label="Email"
+        type="email"
+        fullWidth
+        margin="normal"
+        {...register("email")}
+        error={!!errors.email}
+        helperText={errors.email?.message}
+      />
 
-            if (user) {
-              navigate("/");
-            } else {
-              setError("Invalid user role");
-            }
-          } catch (err: any) {
-            console.error("Login error:", err);
-            setError(err.response?.data?.message || "Login failed");
-          } finally {
-            setSubmitting(false);
-          }
-        }}>
-        {({ isSubmitting, errors, touched, handleChange, values }) => (
-          <Form>
-            <TextField
-              name="email"
-              label="Email"
-              type="email"
-              fullWidth
-              margin="normal"
-              value={values.email}
-              onChange={handleChange}
-              error={touched.email && !!errors.email}
-              helperText={touched.email && errors.email}
-            />
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        margin="normal"
+        {...register("password")}
+        error={!!errors.password}
+        helperText={errors.password?.message}
+      />
 
-            <TextField
-              name="password"
-              label="Password"
-              type="password"
-              fullWidth
-              margin="normal"
-              value={values.password}
-              onChange={handleChange}
-              error={touched.password && !!errors.password}
-              helperText={touched.password && errors.password}
-            />
+      <Button
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 2 }}
+        onClick={handleSubmit(onSubmit)}
+        disabled={isSubmitting}>
+        {isSubmitting ? <CircularProgress size={24} /> : "Login"}
+      </Button>
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-              disabled={isSubmitting}>
-              {isSubmitting ? <CircularProgress size={24} /> : "Login"}
-            </Button>
-            <Typography variant="body2" align="center" mt={2}>
-              Don't have an account?
-              <Button color="primary" onClick={() => navigate("/register")}>
-                Register
-              </Button>
-            </Typography>
-          </Form>
-        )}
-      </Formik>
+      <Typography variant="body2" align="center" mt={2}>
+        Don't have an account?{" "}
+        <Button color="primary" onClick={() => navigate("/register")}>
+          Register
+        </Button>
+      </Typography>
     </Box>
   );
 };
