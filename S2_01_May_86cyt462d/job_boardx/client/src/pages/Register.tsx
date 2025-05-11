@@ -6,10 +6,11 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 
 const RegisterSchema = Yup.object().shape({
   fullName: Yup.string().required("Full Name is required"),
@@ -20,9 +21,34 @@ const RegisterSchema = Yup.object().shape({
     .required("Role is required"),
 });
 
+type RegisterFormData = Yup.InferType<typeof RegisterSchema>;
+
 const Register = () => {
-  const { register } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: yupResolver(RegisterSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      role: "jobseeker",
+    },
+  });
+
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      const success = await registerUser(data);
+      if (success) navigate("/");
+    } catch (err) {
+      console.error("Registration error:", err);
+    }
+  };
 
   return (
     <Box maxWidth={400} mx="auto" mt={6}>
@@ -30,102 +56,66 @@ const Register = () => {
         Create an Account
       </Typography>
 
-      <Formik
-        initialValues={{
-          fullName: "",
-          email: "",
-          password: "",
-          role: "jobseeker",
-        }}
-        validationSchema={RegisterSchema}
-        onSubmit={async (values, { setSubmitting }) => {
-          try {
-            // Cast role safely
-            const castRole = values.role as "jobseeker" | "employer";
-            const success = await register({ ...values, role: castRole });
+      <TextField
+        label="Full Name"
+        fullWidth
+        margin="normal"
+        {...register("fullName")}
+        error={!!errors.fullName}
+        helperText={errors.fullName?.message}
+      />
 
-            if (success) {
-              navigate("/");
-            }
-          } catch (err) {
-            console.error(err);
-          } finally {
-            setSubmitting(false);
-          }
-        }}>
-        {({ isSubmitting, errors, touched, handleChange, values }) => (
-          <Form>
-            <TextField
-              name="fullName"
-              label="Full Name"
-              fullWidth
-              margin="normal"
-              value={values.fullName}
-              onChange={handleChange}
-              error={touched.fullName && !!errors.fullName}
-              helperText={touched.fullName && errors.fullName}
-            />
+      <TextField
+        label="Email"
+        type="email"
+        fullWidth
+        margin="normal"
+        {...register("email")}
+        error={!!errors.email}
+        helperText={errors.email?.message}
+      />
 
-            <TextField
-              name="email"
-              label="Email"
-              type="email"
-              fullWidth
-              margin="normal"
-              value={values.email}
-              onChange={handleChange}
-              error={touched.email && !!errors.email}
-              helperText={touched.email && errors.email}
-            />
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        margin="normal"
+        {...register("password")}
+        error={!!errors.password}
+        helperText={errors.password?.message}
+      />
 
-            <TextField
-              name="password"
-              label="Password"
-              type="password"
-              fullWidth
-              margin="normal"
-              value={values.password}
-              onChange={handleChange}
-              error={touched.password && !!errors.password}
-              helperText={touched.password && errors.password}
-            />
+      <TextField
+        select
+        label="Role"
+        fullWidth
+        margin="normal"
+        defaultValue="jobseeker"
+        {...register("role")}
+        error={!!errors.role}
+        helperText={errors.role?.message}
+      >
+        <MenuItem value="jobseeker">Job Seeker</MenuItem>
+        <MenuItem value="employer">Employer</MenuItem>
+      </TextField>
 
-            <TextField
-              select
-              name="role"
-              label="Role"
-              fullWidth
-              margin="normal"
-              value={values.role}
-              onChange={handleChange}
-              error={touched.role && !!errors.role}
-              helperText={touched.role && errors.role}>
-              <MenuItem value="jobseeker">Job Seeker</MenuItem>
-              <MenuItem value="employer">Employer</MenuItem>
-            </TextField>
+      <Button
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 2 }}
+        onClick={handleSubmit(onSubmit)}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? <CircularProgress size={24} /> : "Register"}
+      </Button>
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-              disabled={isSubmitting}>
-              {isSubmitting ? <CircularProgress size={24} /> : "Register"}
-            </Button>
-
-            <Typography variant="body2" sx={{ mt: 2, textAlign: "center" }}>
-              Already have an account?{" "}
-              <Button
-                color="primary"
-                
-                onClick={() => navigate("/login")}>
-                Login here
-              </Button>
-            </Typography>
-          </Form>
-        )}
-      </Formik>
+      <Typography variant="body2" sx={{ mt: 2, textAlign: "center" }}>
+        Already have an account?{" "}
+        <Button color="primary" onClick={() => navigate("/login")}>
+          Login here
+        </Button>
+      </Typography>
     </Box>
   );
 };
