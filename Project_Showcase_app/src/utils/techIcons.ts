@@ -1,0 +1,38 @@
+import {
+  SiReact,
+  SiTypescript,
+  SiJavascript,
+  SiRedux,
+  SiGraphql,
+  SiNextdotjs,
+  SiMui,
+  SiStyledcomponents,
+  SiFirebase,
+  SiCss3,
+  SiD3Dotjs,
+  SiHtml5,
+  SiTailwindcss,
+  SiNodedotjs,
+} from "react-icons/si";
+import type { IconType } from "react-icons";
+
+export const techIcons: Record<string, IconType> = {
+  React: SiReact,
+  TypeScript: SiTypescript,
+  JavaScript: SiJavascript,
+  Redux: SiRedux,
+  GraphQL: SiGraphql,
+  "Next.js": SiNextdotjs,
+  "Material UI": SiMui,
+  "Styled Components": SiStyledcomponents,
+  Firebase: SiFirebase,
+  CSS: SiCss3,
+  "CSS Animations": SiCss3,
+  HTML: SiHtml5,
+  D3: SiD3Dotjs,
+  "D3.js": SiD3Dotjs,
+  Tailwind: SiTailwindcss,
+  "Tailwind CSS": SiTailwindcss,
+  Node: SiNodedotjs,
+  "Node.js": SiNodedotjs,
+};
